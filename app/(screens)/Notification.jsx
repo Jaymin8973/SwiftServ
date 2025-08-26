@@ -1,21 +1,71 @@
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from 'expo-router';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 const Notification = () => {
-      const navigation = useNavigation();
+    const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   return (
     <ScrollView>
-        <SafeAreaView>
-            <View className="flex-row  mx-12 items-center mt-5">
-             <Pressable className=" rounded-full p-2 " onPress={()=>navigation.goBack()}>
-                <AntDesign name="left" size={30} color="black" />
-             </Pressable>
-            <Text className="text-2xl  font-bold">Notification</Text>
-          <Text/>
+      <SafeAreaView>
+        <View className="mx-5 gap-10">
+          <View className="flex-row justify-between items-center">
+            <View>
+              <Text className="text-2xl mb-1">
+                Show Notification
+              </Text>
+              <Text className="text-l text-gray-400">
+                Receive push notifications for new message
+              </Text>
             </View>
-        </SafeAreaView>
+            <View>
+               <Switch
+          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
+            </View>
+          </View>
+
+            <View className="flex-row justify-between items-center">
+            <View>
+              <Text className="text-2xl mb-1">
+                Notification sounds
+              </Text>
+              <Text className="text-l text-gray-400">
+                Play sound for new message
+              </Text>
+            </View>
+            <View>
+               <Switch
+          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={""}
+        />
+            </View>
+          </View>
+
+            <View className="flex-row justify-between items-center">
+            <View>
+              <Text className="text-2xl mb-1">
+                Lock screen Notification
+              </Text>
+              <Text className="text-l text-gray-400">
+                Allow notification on the lock screen
+              </Text>
+            </View>
+            <View>
+               <Switch
+          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={""}
+        />
+            </View>
+          </View>
+        </View>
+      </SafeAreaView>
     </ScrollView>
   )
 }

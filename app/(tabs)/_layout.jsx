@@ -1,14 +1,12 @@
 import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons, Octicons, SimpleLineIcons } from '@expo/vector-icons';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 import { Image } from 'expo-image';
-import { Tabs } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import AboutUs from '../(slidebar)/AboutUs';
 import Setting from '../(slidebar)/Setting';
 import Support from '../(slidebar)/Support';
-import Cart from "./Cart";
-import Profile from "./Profile";
-import Discover from "./Search";
 const _layout = () => {
   const Drawer = createDrawerNavigator();
 
@@ -33,18 +31,52 @@ const _layout = () => {
   }
 
   function TabNavigator() {
+    const Navigation = useNavigation();
+    const router = useRouter();
     return (
-      <Tabs screenOptions={{ headerShown: false ,  tabBarActiveBackgroundColor: 'trasperent',
+      <Tabs screenOptions={{
+        tabBarActiveBackgroundColor: 'trasperent',
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'lightgray',}}>
+        tabBarInactiveTintColor: 'lightgray',
+        tabBarButton: (props) => (
+      <TouchableWithoutFeedback {...props}>
+        <View className="flex-1 justify-center items-center">{props.children}</View>
+      </TouchableWithoutFeedback>
+    ),
+      }}>
         <Tabs.Screen
           name="index"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, size }) => (
-             <Octicons name="home" size={24} color={color} />
+          options={({ navigation }) => ({
+            headerLeft: () => (
+              <Pressable onPress={() => navigation.openDrawer()} className="ml-8">
+               <SimpleLineIcons name="menu" size={24} color="black" />
+              </Pressable>
             ),
-          }}
+            drawerLabel: ({ focused, color }) => (
+              <Text style={{ fontSize: 20, color: color, fontWeight: 'bold' }}>
+                Homepage
+              </Text>
+            ),
+            drawerIcon: ({ color, size, focused }) => (
+              <Octicons name="home" size={24} color={focused ? "black" : "gray"} />
+            ),
+               headerBackground: () => (
+            <View style={{ backgroundColor: 'transparent' }} />
+          ),
+            headerTitle: () => (
+              <Text className="text-2xl font-bold">Stylique</Text>
+            ),
+            headerTitleAlign: 'center',
+            headerRight: () => (
+              <Pressable onPress={()=>router.push("Notification")} className="mr-8" >
+                <FontAwesome name='bell-o' size={25} color={'black'} />
+              </Pressable>
+            ),
+             title: "",
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name="home" size={24} color={color} />
+            ),
+          })}
         />
         <Tabs.Screen
           name="Search"
@@ -53,6 +85,7 @@ const _layout = () => {
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="search" size={24} color={color} />
             ),
+            headerShown:false
           }}
         />
         <Tabs.Screen
@@ -71,6 +104,7 @@ const _layout = () => {
             tabBarIcon: ({ color, size }) => (
               <Feather name="user" size={24} color={color} />
             ),
+            headerShown:false
           }}
         />
 
@@ -104,50 +138,14 @@ const _layout = () => {
           drawerIcon: ({ color, size, focused }) => (
             <Octicons name="home" size={24} color={focused ? "black" : "gray"} />
           ),
-        }} />
+        }} 
+      />
 
-         <Drawer.Screen name="Discover" component={Discover}
+      <Drawer.Screen name="Setting" component={Setting}
         options={{
           headerShown: false,
           drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
-              Discover
-            </Text>
-          ),
-          drawerIcon: ({ color, size, focused }) => (
-            <SimpleLineIcons name="magnifier" size={24} color={focused ? "black" : "gray"} />
-          ),
-        }} />
-          <Drawer.Screen name="Cart" component={Cart}
-        options={{
-          headerShown: false,
-          drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
-              My Orders
-            </Text>
-          ),
-          drawerIcon: ({ color, size, focused }) => (
-            <SimpleLineIcons name="handbag" size={24} color={focused ? "black" : "gray"} />
-          ),
-        }} />
-
-          <Drawer.Screen name="Profile" component={Profile}
-        options={{
-          headerShown: false,
-          drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
-              My Profile
-            </Text>
-          ),
-          drawerIcon: ({ color, size, focused }) => (
-            <Feather name="user" size={24} color={focused ? "black" : "gray"} />
-          ),
-        }} />
-         <Drawer.Screen name="Setting" component={Setting}
-        options={{
-          headerShown: false,
-          drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
+            <Text style={{ fontSize: 20, color: color, fontWeight: 'bold' }}>
               Setting
             </Text>
           ),
@@ -155,11 +153,11 @@ const _layout = () => {
             <AntDesign name="setting" size={24} color={focused ? "black" : "gray"} />
           ),
         }} />
-          <Drawer.Screen name="Support" component={Support}
+      <Drawer.Screen name="Support" component={Support}
         options={{
           headerShown: false,
           drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
+            <Text style={{ fontSize: 20, color: color, fontWeight: 'bold' }}>
               Support
             </Text>
           ),
@@ -167,11 +165,11 @@ const _layout = () => {
             <MaterialCommunityIcons name="email-outline" size={24} color={focused ? "black" : "gray"} />
           ),
         }} />
-          <Drawer.Screen name="AboutUs" component={AboutUs}
+      <Drawer.Screen name="AboutUs" component={AboutUs}
         options={{
           headerShown: false,
           drawerLabel: ({ focused, color }) => (
-            <Text style={{ fontSize: 20, color: color, fontWeight:'bold'  }}>
+            <Text style={{ fontSize: 20, color: color, fontWeight: 'bold' }}>
               About us
             </Text>
           ),
