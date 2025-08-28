@@ -3,25 +3,81 @@ import axios from 'axios';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
+import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const EditProfile = () => {
     const [image, setImage] = useState(null);
+    const [Email, setEmail] = useState(null);
+    const [initialValues, setIntialvalues] = useState(null)
+    const [open, setOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(null);
+
+    const options = [
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+        { label: 'Other', value: 'other' },
+    ];
+
+    const handleSelect = (value) => {
+        setSelectedValue(value);
+        setOpen(false);
+        formik.setFieldValue('gender', value);
+    };
+
+    const formik = useFormik({
+        initialValues: initialValues || { firstname: '', lastname: '', email: '', phone: '', gender: '', image: '' },
+        enableReinitialize: true,
+        onSubmit: async (values) => {
+            try {
+                const email = await SecureStore.getItemAsync('userEmail');
+                const response = await axios.put('http://172.20.10.4:3000/users/updateUser', {
+                    email,
+                    ...values,
+                });
+                alert("Profile updated successfully");
+            } catch (error) {
+                if (error.response) {
+                    alert(error.response.data.message || "Server error");
+                } else if (error.request) {
+                    alert("Network error, please try again");
+                } else {
+                    console.log(error.message);
+                    alert(error.message);
+                }
+            } ''
+        },
+    });
 
     useEffect(() => {
-        const email = SecureStore.getItemAsync('userEmail');
-        axios.post('http://192.168.1.4:3000/users/user', {
-            email
-        })
-            .then(response => {
-                const userData = response.data;
-                setImage(userData.image);
-            })
-            .catch(error => {
-                console.error('Error fetching user profile:', error);
-            });
+        FetchData();
     }, []);
+
+    const FetchData = async () => {
+        try {
+            const email = await SecureStore.getItemAsync('userEmail');
+            const res = await axios.post('http://172.20.10.4:3000/users/user', { email });
+            console.log('Setting initialValues:', res.data.user);
+            setImage(res.data.user.image);
+            setSelectedValue(res.data.user.gender || '');
+            setIntialvalues({
+                firstname: res.data.user.firstname || '',
+                lastname: res.data.user.lastname || '',
+                email: res.data.user.email || '',
+                phone: res.data.user.phone || '',
+                gender: res.data.user.gender || '',
+                image: res.data.user.image || ''
+            });
+        } catch (err) {
+            alert(err?.response?.data?.message || err.message);
+        }
+    };
+
+    const getEmail = async () => {
+        const email = await SecureStore.getItemAsync('userEmail');
+        setEmail(email);
+    };
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -32,77 +88,157 @@ const EditProfile = () => {
         });
 
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+        if (!result.canceled && result.assets.length > 0) {
+            const uri = result.assets[0].uri;
+            setImage(uri);
+            formik.setFieldValue('image', uri);
         }
     };
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 100}
-            >
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                    <View>
-                        <View className=" justify-center items-center ">
-                            <Image
-                                source={image ? { uri: image } : require("../../assets/images/User.jpg")}
-                                style={{ height: 150, width: 150, borderRadius: 100 }}
-                            />
-                            <TouchableOpacity className="absolute top-32 right-36 bg-[#353945] p-5 rounded-full" onPress={pickImage}>
-                                <Feather name="camera" size={24} color="white" />
-                            </TouchableOpacity>
-                        </View>
-                        <View className="gap-10 mx-5 mt-20">
-                            <View className="flex-row gap-5">
-                                <View className="w-1/2">
+
+
+    if (!initialValues) {
+        return (
+            <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </SafeAreaView>
+        );
+    }
+    else {
+        return (
+
+            <SafeAreaView style={{ flex: 1 }}>
+                <KeyboardAvoidingView
+                    style={{ flex: 1 }}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 100}
+                >
+                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                        <View>
+                            <View className=" justify-center items-center ">
+                                <Image
+                                    source={{ uri: image }}
+                                    style={{ height: 150, width: 150, borderRadius: 100 }}
+                                />
+                                <TouchableOpacity className="absolute top-32 right-36 bg-[#353945] p-5 rounded-full" onPress={pickImage}>
+                                    <Feather name="camera" size={24} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                            <View className="gap-10 mx-5 mt-20">
+                                <View className="flex-row gap-5">
+                                    <View className="w-1/2">
+                                        <Text className="text-xl mb-2 text-gray-500">
+                                            FirstName
+                                        </Text>
+                                        <TextInput
+                                            className="border-b border-gray-300 text-xl pb-2"
+                                            value={formik.values.firstname}
+                                            onChangeText={formik.handleChange('firstname')}
+                                            onBlur={formik.handleBlur('firstname')}
+                                        />
+                                    </View>
+
+                                    <View className="w-44">
+                                        <Text className="text-xl mb-2 text-gray-500">
+                                            Last Name
+                                        </Text>
+                                        <TextInput
+                                            className="border-b border-gray-300 text-xl pb-2"
+                                            value={formik.values.lastname}
+                                            onChangeText={formik.handleChange('lastname')}
+                                            onBlur={formik.handleBlur('lastname')}
+                                        />
+                                    </View>
+                                </View>
+                                <View>
                                     <Text className="text-xl mb-2 text-gray-500">
-                                        FirstName
+                                        Email
                                     </Text>
-                                    <TextInput className="border-b border-gray-300 text-2xl" />
+                                    <TextInput
+                                        className="border-b border-gray-300 text-xl  pb-2"
+                                        value={formik.values.email}
+                                        onChangeText={formik.handleChange('email')}
+                                        onBlur={formik.handleBlur('email')}
+                                        editable={false}
+                                    />
                                 </View>
 
-                                <View className="w-44">
-                                    <Text className="text-xl mb-2 text-gray-500">
-                                        Last Name
-                                    </Text>
-                                    <TextInput className="border-b border-gray-300 text-2xl" />
+                                <View className="flex-row gap-5">
+
+                                    <View className="w-44 justify-center">
+                                        <Text className="text-xl mb-2 text-gray-500">Gender</Text>
+                                        <View className="">
+                                            <TouchableOpacity
+                                                className="w-44 border-b border-gray-300 rounded-lg "
+                                                onPress={() => setOpen(true)}
+                                            >
+                                                <Text className="text-gray-900 text-xl">
+                                                    {selectedValue
+                                                        ? options.find((opt) => opt.value === selectedValue)?.label
+                                                        : 'Select Gender'}
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                            <Modal
+                                                transparent
+                                                animationType="fade"
+                                                visible={open}
+                                                onRequestClose={() => setOpen(false)}
+                                                
+                                            >
+                                                <Pressable
+                                                    style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
+                                                    onPress={() => setOpen(false)}
+                                                    className="justify-center "
+                                                >
+                                                    <View className="bg-white  rounded-lg p-4 mx-8 mt-24 max-h-72">
+                                                        <FlatList
+                                                            data={options}
+                                                            keyExtractor={(item) => item.value}
+                                                            renderItem={({ item }) => (
+                                                                <TouchableOpacity
+                                                                    className="p-3 border-b border-gray-200"
+                                                                    onPress={() => handleSelect(item.value)}
+                                                                >
+                                                                    <Text className="text-base text-gray-800">{item.label}</Text>
+                                                                </TouchableOpacity>
+                                                            )}
+                                                        />
+                                                    </View>
+                                                </Pressable>
+                                            </Modal>
+                                        </View>
+                                    </View>
+
+                                    <View className="w-1/2">
+                                        <Text className="text-xl mb-2 text-gray-500">
+                                            Phone
+                                        </Text>
+                                        <TextInput
+                                            className="border-gray-300 border-b text-xl pb-2"
+                                            value={formik.values.phone}
+                                            onChangeText={formik.handleChange('phone')}
+                                            onBlur={formik.handleBlur('phone')}
+                                        />
+                                    </View>
                                 </View>
                             </View>
-                            <View>
-                                <Text className="text-xl mb-2 text-gray-500">
-                                    Email
-                                </Text>
-                                <TextInput className="border-b border-gray-300 text-2xl" />
-                            </View>
-
-                            <View className="flex-row gap-5">
-
-                                <View className="w-44">
-                                    <Text className="text-xl mb-2 text-gray-500">
-                                        Gender
+                            <View className="mt-20 items-center">
+                                <TouchableOpacity
+                                    onPress={formik.handleSubmit}
+                                    disabled={formik.isSubmitting}
+                                    className="bg-[#343434] px-20 py-5 rounded-full"
+                                >
+                                    <Text className="text-white text-xl">
+                                        {formik.isSubmitting ? 'Saving...' : 'Save Changes'}
                                     </Text>
-                                    <TextInput className="border-b border-gray-300 text-2xl" />
-                                </View>
-                                <View className="w-1/2">
-                                    <Text className="text-xl mb-2 text-gray-500">
-                                        Phone
-                                    </Text>
-                                    <TextInput className="border-gray-300 border-b text-2xl" />
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                        <View className="mt-20 items-center">
-                            <TouchableOpacity className="bg-[#343434] px-20 py-5 rounded-full">
-                                <Text className="text-white text-xl">Save Changes</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
-    )
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        )
+    }
 }
 const styles = StyleSheet.create({
     container: {

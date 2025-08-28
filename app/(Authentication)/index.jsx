@@ -3,7 +3,8 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useFormik } from 'formik';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -11,26 +12,9 @@ import * as Yup from 'yup';
 
 const Login = () => {
   const router = useRouter();
+  const [Loading , setLoading] = useState(false);
 
-
-  function decodeJwt(token) {
-    try {
-      const payload = token.split('.')[1]; // बीच वाला पार्ट (Payload)
-      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-      const decodedPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join('')
-      );
-      return JSON.parse(decodedPayload);
-    } catch (e) {
-      console.error('Invalid token', e);
-      return null;
-    }
-  }
+  
 
   const ValidationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -41,7 +25,8 @@ const Login = () => {
     validationSchema: ValidationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://192.168.1.4:3000/users/login', values);
+        setLoading(true);
+        const response = await axios.post('http://172.20.10.4:3000/users/login', values);
         const token = response.data.token;
         console.log(token);
         await SecureStore.setItemAsync('userToken', token);
@@ -51,6 +36,7 @@ const Login = () => {
           text1: 'Login Successful',
           text2: 'Welcome back!'
         });
+        setLoading(false);
         router.replace('(tabs)');
       } catch (error) {
         if (error.response) {
@@ -109,7 +95,11 @@ const Login = () => {
               </View>
               <View className="items-center gap-10">
                 <TouchableOpacity className="border w-40 rounded-full bg-[#2D201C] justify-center items-center" onPress={formik.handleSubmit}>
-                  <Text className="text-white p-5 ">LOG IN</Text>
+                  {Loading ? (
+                    <ActivityIndicator size="small" color="#fff" className="p-5" />
+                  ) : (
+                    <Text className="text-white  p-5">LOG IN</Text>
+                  )}
                 </TouchableOpacity>
                 <Text>
                   Or log in with

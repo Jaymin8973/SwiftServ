@@ -1,28 +1,52 @@
-import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons, Octicons, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons, SimpleLineIcons } from '@expo/vector-icons';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import { Image } from 'expo-image';
 import { Tabs, useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import AboutUs from '../(slidebar)/AboutUs';
 import Setting from '../(slidebar)/Setting';
 import Support from '../(slidebar)/Support';
 const _layout = () => {
+  const [image , setImage] = useState(null);
+  const [name , setName] = useState(null);
+  const [email , setEmail] = useState(null);
+  const Navigation = useNavigation();
+
+  useEffect(() => {
+    FetchData();
+  }, [FetchData]);
+
+  const FetchData = async () => {
+    try {
+      const email = await SecureStore.getItemAsync('userEmail');
+      const res = await axios.post('http://172.20.10.4:3000/users/user', { email });
+      const Name = res.data.user.firstname + " " + res.data.user.lastname;
+      setImage(res.data.user.image);
+      setName(Name);
+      setEmail(res.data.user.email);
+    } catch (err) {
+      alert(err?.response?.data?.message || err.message);
+    }
+  };
+
   const Drawer = createDrawerNavigator();
 
   function CustomDrawerContent(props) {
 
     return (
-
       <DrawerContentScrollView {...props}>
         <View style={styles.topContent} className=" flex-row ">
           <Image
-            source={require("../../assets/images/User.jpg")}
+            source={image ? { uri: image } : require("../../assets/images/User.jpg")}
             style={styles.logo}
           />
           <View className="ms-5">
-            <Text style={styles.username}>Sunie Pham</Text>
-            <Text className="text-xl">suniuex@gmail.com</Text>
+            <Text style={styles.username}>{name ? name : "User"}</Text>
+            <Text className="text-xl">{email ? email : "user@example.com"}</Text>
           </View>
         </View>
         <DrawerItemList {...props} />
@@ -31,7 +55,7 @@ const _layout = () => {
   }
 
   function TabNavigator() {
-    const Navigation = useNavigation();
+    
     const router = useRouter();
     return (
       <Tabs screenOptions={{
@@ -49,7 +73,7 @@ const _layout = () => {
           options={({ navigation }) => ({
             headerLeft: () => (
               <Pressable onPress={() => navigation.openDrawer()} className="ml-8">
-               <SimpleLineIcons name="menu" size={24} color="black" />
+               <MaterialIcons name="notes" size={24} color="black" />
               </Pressable>
             ),
             drawerLabel: ({ focused, color }) => (
@@ -142,8 +166,7 @@ const _layout = () => {
       />
 
       <Drawer.Screen name="Setting" component={Setting}
-        options={{
-          headerShown: false,
+        options={({ navigation }) => ({
           drawerLabel: ({ focused, color }) => (
             <Text style={{ fontSize: 20, color: color, fontWeight: 'bold' }}>
               Setting
@@ -152,7 +175,20 @@ const _layout = () => {
           drawerIcon: ({ color, size, focused }) => (
             <AntDesign name="setting" size={24} color={focused ? "black" : "gray"} />
           ),
-        }} />
+           headerLeft: () => (
+              <Pressable onPress={() => navigation.openDrawer()} className="ml-8">
+               <MaterialIcons name="notes" size={24} color="black" />
+              </Pressable>
+            ),
+
+             headerBackground: () => (
+            <View style={{ backgroundColor: 'transparent' }} />
+          ),
+            headerTitle: () => (
+              <Text className="text-2xl font-bold">Setting</Text>
+            ),
+            headerTitleAlign: 'center',
+        })} />
       <Drawer.Screen name="Support" component={Support}
         options={{
           headerShown: false,

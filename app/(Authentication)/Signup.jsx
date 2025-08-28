@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
 import * as Yup from 'yup';
@@ -16,6 +16,7 @@ const Signup = () => {
   const [Password, setPassword] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
   const [visible, setVisible] = useState(true);
+  const [Loading , setLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -34,7 +35,8 @@ const Signup = () => {
       const firstname = nameParts[0];
       const lastname = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
       try {
-        const result = await axios.post('http://192.168.1.4:3000/users/register', {
+        setLoading(true);
+        const result = await axios.post('http://172.20.10.4:3000/users/register', {
           firstname,
           lastname,
           email: values.email,
@@ -49,6 +51,7 @@ const Signup = () => {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+        setLoading(false);
         router.push('(tabs)');
 
       } catch (error) {
@@ -131,7 +134,11 @@ const Signup = () => {
             </View>
             <View className="items-center gap-10">
               <TouchableOpacity className="border w-40 rounded-full bg-[#2D201C] justify-center items-center" onPress={formik.handleSubmit}>
-                <Text className="text-white p-5 font-bold">Sign up</Text>
+                {Loading ? (
+                  <ActivityIndicator size="small" color="#fff" className="p-5" />
+                ) : (
+                  <Text className="text-white p-5 font-bold">Sign up</Text>
+                )}
               </TouchableOpacity>
               <Text>
                 Or log in with

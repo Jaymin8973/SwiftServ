@@ -25,7 +25,7 @@ const Password = () => {
     onSubmit: async values => {
        try {
     const response = await axios.post(
-      'http://192.168.1.4:3000/users/forgotpassword',
+      'http://172.20.10.4:3000/users/forgotpassword',
       { newPassword: values.newPassword , email: email }
     );
     

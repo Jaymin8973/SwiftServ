@@ -32,6 +32,34 @@ const _layout = () => {
     <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
   ),
     })} />
+
+     <Stack.Screen name='NotificationSetting'  options={({navigation})=>({
+      headerLeft:()=>(
+           <Pressable className=" rounded-full p-2 " onPress={()=>navigation.goBack()}>
+                <AntDesign name="left" size={20} color="black" />
+             </Pressable>
+      ),
+      headerTitle:()=>(
+      <Text className="text-2xl font-bold">Notification</Text>
+      ),
+       headerBackground: () => (
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
+  ),
+    })} />
+
+    <Stack.Screen name='Voucher'  options={({navigation})=>({
+      headerLeft:()=>(
+           <Pressable className=" rounded-full p-2 " onPress={()=>navigation.goBack()}>
+                <AntDesign name="left" size={20} color="black" />
+             </Pressable>
+      ),
+      headerTitle:()=>(
+      <Text className="text-2xl font-bold">Voucher</Text>
+      ),
+       headerBackground: () => (
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
+  ),
+    })} />
   </Stack> 
   )
 }

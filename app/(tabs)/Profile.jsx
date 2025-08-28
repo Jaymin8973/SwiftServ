@@ -1,23 +1,59 @@
 import { AntDesign, Entypo, Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
+import axios from 'axios';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 const Profile = () => {
   const router = useRouter();
+   const [image , setImage] = useState(null);
+  const [name , setName] = useState(null);
+  const [email , setEmail] = useState(null);
+  const [Loading , setLoading] = useState(false);
+
+  useEffect(() => {
+    FetchData();
+  }, []);
+
+  const FetchData = async () => {
+    try {
+      setLoading(true);
+      const email = await SecureStore.getItemAsync('userEmail');
+      const res = await axios.post('http://172.20.10.4:3000/users/user', { email });
+      const Name = res.data.user.firstname + " " + res.data.user.lastname;
+      setImage(res.data.user.image);
+      setName(Name);
+      setEmail(res.data.user.email);
+    } catch (err) {
+      alert(err?.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (Loading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center ">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
   return (
+    
     <SafeAreaView className= "flex-1">
         <ScrollView  contentContainerStyle={{ flexGrow: 1 , justifyContent: 'center' }}>
         <View className="mx-7 gap-5 ">
           <View style={styles.topContent} className=" flex-row justify-around">
             <Image
-              source={require("../../assets/images/User.jpg")}
+              source={{ uri: image }}
               style={styles.logo}
             />
             <View className="">
-              <Text style={styles.username}>Sunie Pham</Text>
-              <Text className="text-xl">suniuex@gmail.com</Text>
+              <Text style={styles.username}>{name}</Text>
+              <Text className="text-xl">{email}</Text>
             </View>
             <TouchableOpacity
               onPress={() => (router.push("EditProfile"))}
@@ -50,7 +86,7 @@ const Profile = () => {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => (router.replace("/(Authentication)"))}>
+            <TouchableOpacity onPress={() => (router.push("Voucher"))}>
               <View className="flex-row  mt-10 items-center justify-between border-b border-gray-300 pb-3">
                 <View className="flex-row gap-3 items-center">
                   <AntDesign name="gift" size={24} color="black" />
