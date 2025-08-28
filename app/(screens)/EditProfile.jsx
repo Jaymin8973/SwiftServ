@@ -32,7 +32,7 @@ const EditProfile = () => {
         onSubmit: async (values) => {
             try {
                 const email = await SecureStore.getItemAsync('userEmail');
-                const response = await axios.put('http://172.20.10.4:3000/users/updateUser', {
+                const response = await axios.put('http://192.168.1.4:3000/users/updateUser', {
                     email,
                     ...values,
                 });
@@ -57,7 +57,7 @@ const EditProfile = () => {
     const FetchData = async () => {
         try {
             const email = await SecureStore.getItemAsync('userEmail');
-            const res = await axios.post('http://172.20.10.4:3000/users/user', { email });
+            const res = await axios.post('http://192.168.1.4:3000/users/user', { email });
             console.log('Setting initialValues:', res.data.user);
             setImage(res.data.user.image);
             setSelectedValue(res.data.user.gender || '');

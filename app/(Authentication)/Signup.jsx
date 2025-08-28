@@ -36,7 +36,7 @@ const Signup = () => {
       const lastname = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
       try {
         setLoading(true);
-        const result = await axios.post('http://172.20.10.4:3000/users/register', {
+        const result = await axios.post('http://192.168.1.4:3000/users/register', {
           firstname,
           lastname,
           email: values.email,

@@ -26,7 +26,7 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         setLoading(true);
-        const response = await axios.post('http://172.20.10.4:3000/users/login', values);
+        const response = await axios.post('http://192.168.1.4:3000/users/login', values);
         const token = response.data.token;
         console.log(token);
         await SecureStore.setItemAsync('userToken', token);

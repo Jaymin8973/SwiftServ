@@ -60,6 +60,36 @@ const _layout = () => {
     <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
   ),
     })} />
+
+
+ <Stack.Screen name='Payment'  options={({navigation})=>({
+      headerLeft:()=>(
+           <Pressable className=" rounded-full p-2 " onPress={()=>navigation.goBack()}>
+                <AntDesign name="left" size={20} color="black" />
+             </Pressable>
+      ),
+      headerTitle:()=>(
+      <Text className="text-2xl font-bold">Payment</Text>
+      ),
+       headerBackground: () => (
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
+  ),
+    })} />
+    
+     <Stack.Screen name='Addnewcard'  options={({navigation})=>({
+      headerLeft:()=>(
+           <Pressable className=" rounded-full p-2 " onPress={()=>navigation.goBack()}>
+                <AntDesign name="left" size={20} color="black" />
+             </Pressable>
+      ),
+      headerTitle:()=>(
+      <Text className="text-2xl font-bold">Add new card</Text>
+      ),
+       headerBackground: () => (
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}  />
+  ),
+    })} />
+
   </Stack> 
   )
 }

@@ -31,7 +31,7 @@ const Verification = () => {
   const verifyOtp = async (OTP) => {
     try {
       const response = await axios.post(
-        'http://172.20.10.4:3000/users/verify-otp',
+        'http://192.168.1.4:3000/users/verify-otp',
         { otp: OTP, email }
       );
 

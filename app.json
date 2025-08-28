@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "SwiftServ",
-    "slug": "SwiftServ",
+    "name": "Stylique",
+    "slug": "Stylique",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "swiftserv",
+    "scheme": "Stylique",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -23,7 +23,7 @@ const _layout = () => {
   const FetchData = async () => {
     try {
       const email = await SecureStore.getItemAsync('userEmail');
-      const res = await axios.post('http://172.20.10.4:3000/users/user', { email });
+      const res = await axios.post('http://192.168.1.4:3000/users/user', { email });
       const Name = res.data.user.firstname + " " + res.data.user.lastname;
       setImage(res.data.user.image);
       setName(Name);
