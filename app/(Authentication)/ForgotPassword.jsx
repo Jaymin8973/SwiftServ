@@ -16,7 +16,7 @@ const ForgotPassword = () => {
     validationSchema: ValidationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://192.168.1.4:3000/users/otp', values);
+        const response = await axios.post('http://192.168.1.2:3000/users/otp', values);
         Toast.show({
           type: 'success',
           text1: 'Password Reset Email Sent',

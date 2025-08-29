@@ -16,14 +16,11 @@ const _layout = () => {
   const [email , setEmail] = useState(null);
   const Navigation = useNavigation();
 
-  useEffect(() => {
-    FetchData();
-  }, [FetchData]);
 
   const FetchData = async () => {
     try {
       const email = await SecureStore.getItemAsync('userEmail');
-      const res = await axios.post('http://192.168.1.4:3000/users/user', { email });
+      const res = await axios.post('http://192.168.1.2:3000/users/user', { email });
       const Name = res.data.user.firstname + " " + res.data.user.lastname;
       setImage(res.data.user.image);
       setName(Name);
@@ -32,6 +29,12 @@ const _layout = () => {
       alert(err?.response?.data?.message || err.message);
     }
   };
+
+  useEffect(() => {
+    FetchData();
+  }, [FetchData]);
+
+  
 
   const Drawer = createDrawerNavigator();
 

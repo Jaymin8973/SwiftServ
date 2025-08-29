@@ -21,7 +21,7 @@ const Profile = () => {
     try {
       setLoading(true);
       const email = await SecureStore.getItemAsync('userEmail');
-      const res = await axios.post('http://192.168.1.4:3000/users/user', { email });
+      const res = await axios.post('http://192.168.1.2:3000/users/user', { email });
       const Name = res.data.user.firstname + " " + res.data.user.lastname;
       setImage(res.data.user.image);
       setName(Name);
@@ -100,7 +100,7 @@ const Profile = () => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => (router.replace("/(Authentication)"))}>
+            <TouchableOpacity onPress={() => (router.push("SwipeExample"))}>
               <View className="flex-row  mt-10 items-center justify-between border-b border-gray-300 pb-3">
                 <View className="flex-row gap-3 items-center">
                   <Octicons name="heart-fill" size={24} color="black" />
@@ -114,7 +114,7 @@ const Profile = () => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => (router.replace("/(Authentication)"))}>
+            <TouchableOpacity onPress={() => (router.push("Feedback"))}>
               <View className="flex-row  mt-10 items-center justify-between border-b border-gray-300 pb-3">
                 <View className="flex-row gap-3 items-center">
                   <Octicons name="star-fill" size={24} color="black" />

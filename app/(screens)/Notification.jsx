@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, Switch, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const Notification = () => {
     const [isEnabled, setIsEnabled] = useState(false);
@@ -7,63 +7,11 @@ const Notification = () => {
   return (
     <ScrollView>
       <SafeAreaView>
-        <View className="mx-5 gap-10">
-          <View className="flex-row justify-between items-center">
-            <View>
-              <Text className="text-2xl mb-1">
-                Show Notification
-              </Text>
-              <Text className="text-l text-gray-400">
-                Receive push notifications for new message
-              </Text>
-            </View>
-            <View>
-               <Switch
-          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
-            </View>
-          </View>
-
-            <View className="flex-row justify-between items-center">
-            <View>
-              <Text className="text-2xl mb-1">
-                Notification sounds
-              </Text>
-              <Text className="text-l text-gray-400">
-                Play sound for new message
-              </Text>
-            </View>
-            <View>
-               <Switch
-          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={""}
-        />
-            </View>
-          </View>
-
-            <View className="flex-row justify-between items-center">
-            <View>
-              <Text className="text-2xl mb-1">
-                Lock screen Notification
-              </Text>
-              <Text className="text-l text-gray-400">
-                Allow notification on the lock screen
-              </Text>
-            </View>
-            <View>
-               <Switch
-          trackColor={{false: '#CBCDD8', true: '#508A7B'}}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={""}
-        />
-            </View>
-          </View>
+        <View className="mx-5 gap-10 px-5">
+            <View className="border px-5 py-3 gap-2 rounded-lg border-gray-300">
+              <Text className="text-lg font-semibold">Good morning! Get20% Voucher</Text>
+              <Text className="text-gray-500 text-lg">Summer sale up to 20% off. Limited voucher. Get now!! 😜</Text>
+              </View>
         </View>
       </SafeAreaView>
     </ScrollView>
