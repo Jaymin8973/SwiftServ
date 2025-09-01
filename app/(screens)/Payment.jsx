@@ -44,9 +44,9 @@ const Payment = () => {
         const toValue = isFlipped ? 0 : 180;
         Animated.timing(flipAnimations.current[index], {
             toValue,
-            duration: 300,
-            useNativeDriver: true,
-            easing: Easing.linear(Easing.cubic),
+               duration: 600,
+                useNativeDriver: true,
+                easing: Easing.out(Easing.ease),
         }).start();
         setFlippedIndexes((prev) => ({ ...prev, [index]: !isFlipped }));
     };
@@ -91,11 +91,10 @@ const Payment = () => {
                                                 style={{
                                                     transform: [{ rotateY: backInterpolate }],
                                                     backfaceVisibility: 'hidden',
-                                                    width: 384,
-                                                    height: 240,
+                                                
                                                 }}
                                             >
-                                                <View className="w-96 rounded-2xl bg-[#09A3C5] h-60 justify-center -z-10">
+                                                <View className="rounded-2xl bg-[#09A3C5] h-60 justify-center -z-10">
                                                     <View className="flex-grow items-start justify-center">
                                                         <View className="w-full h-14 bg-black rounded-lg"></View>
                                                     </View>
@@ -118,8 +117,6 @@ const Payment = () => {
                                                 style={{
                                                     transform: [{ rotateY: frontInterpolate }],
                                                     backfaceVisibility: 'hidden',
-                                                    width: '100%',
-                                                    height: 240,
                                                 }}
                                             >
                                                 <ImageBackground
