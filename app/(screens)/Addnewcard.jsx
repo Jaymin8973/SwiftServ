@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
+import IpAddress from '../../Config.json';
 
 const Addnewcard = () => {
     const [cardType, setCardType] = useState('Visa');
@@ -18,7 +19,9 @@ const Addnewcard = () => {
     const animatedValue = useRef(new Animated.Value(0)).current;
     const inputref = useRef(null);
     const [loading, setLoading] = useState(false);
-
+    const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
 
     const validationSchema = yup.object().shape({
         cardNumber: yup.string().required('Card number is required'),
@@ -44,7 +47,7 @@ const Addnewcard = () => {
                 console.log(Email);
                 const payload = { ...values, email: Email };
                 setLoading(true);
-                const response = await axios.post('http://192.168.1.2:3000/payment-cards/add', payload);
+                const response = await API.post(`/payment-cards/add`, payload);
                 console.log(response.data);
                 Toast.show({
                     type: 'success',

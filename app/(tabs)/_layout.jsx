@@ -3,24 +3,29 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { Image } from 'expo-image';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import AboutUs from '../(slidebar)/AboutUs';
 import Setting from '../(slidebar)/Setting';
 import Support from '../(slidebar)/Support';
+import IpAddress from '../../Config.json';
+
 const _layout = () => {
   const [image , setImage] = useState(null);
   const [name , setName] = useState(null);
   const [email , setEmail] = useState(null);
   const Navigation = useNavigation();
+const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
 
 
   const FetchData = async () => {
     try {
       const email = await SecureStore.getItemAsync('userEmail');
-      const res = await axios.post('http://192.168.1.2:3000/users/user', { email });
+      const res = await API.post(`/users/user`, { email });
       const Name = res.data.user.firstname + " " + res.data.user.lastname;
       setImage(res.data.user.image);
       setName(Name);
@@ -30,9 +35,11 @@ const _layout = () => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     FetchData();
-  }, [FetchData]);
+  }, [])
+);
 
   
 

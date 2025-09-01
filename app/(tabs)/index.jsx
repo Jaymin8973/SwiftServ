@@ -8,6 +8,7 @@ const Home = () => {
   const categories = ["Women", "Men", "Accesories", "Beauty"]
   const icons = ["symbol-female", "symbol-male", "eyeglass", "wallet"]
   const Navigation = useNavigation();
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

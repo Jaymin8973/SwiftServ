@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Image, ImageBackground } from 'expo-image';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Easing, Pressable, ScrollView, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Easing, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import IpAddress from '../../Config.json';
 
@@ -20,6 +20,15 @@ const Payment = () => {
     const [loading, setLoading] = useState(false);
     const flipAnimations = useRef([]);
     const [flippedIndexes, setFlippedIndexes] = useState({});
+     const [refreshing, setRefreshing] = useState(false);
+
+       const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchCards();
+    setRefreshing(false);
+  }, []);
+
+
 
     useEffect(() => {
         fetchCards();
@@ -60,7 +69,9 @@ const Payment = () => {
     }
 
     return (
-        <ScrollView className="flex-1">
+        <ScrollView className="flex-1"  refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
             <SafeAreaView className="flex-grow mx-5">
                 <View>
                     <View className="flex-row justify-between items-center">
