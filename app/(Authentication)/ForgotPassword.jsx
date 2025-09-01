@@ -5,18 +5,22 @@ import { useFormik } from 'formik';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
+import IpAddress from '../../Config.json';
+
 const ForgotPassword = () => {
   const router = useRouter();
   const ValidationSchema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
   });
-
+const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
   const formik = useFormik({
     initialValues: { email: '' },
     validationSchema: ValidationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://192.168.1.2:3000/users/otp', values);
+        const response = await API.post(`/users/otp`, values);
         Toast.show({
           type: 'success',
           text1: 'Password Reset Email Sent',

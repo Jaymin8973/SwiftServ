@@ -9,12 +9,17 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import * as Yup from 'yup';
+import IpAddress from '../../Config.json';
+
 
 const Login = () => {
   const router = useRouter();
   const [Loading , setLoading] = useState(false);
+  const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
 
-  
+  console.log(API);
 
   const ValidationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -26,7 +31,7 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         setLoading(true);
-        const response = await axios.post('http://192.168.1.2:3000/users/login', values);
+        const response = await API.post(`/users/login`, values);
         const token = response.data.token;
         console.log(token);
         await SecureStore.setItemAsync('userToken', token);

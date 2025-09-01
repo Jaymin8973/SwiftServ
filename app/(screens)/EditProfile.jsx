@@ -7,13 +7,17 @@ import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import IpAddress from '../../Config.json';
+
 const EditProfile = () => {
     const [image, setImage] = useState(null);
     const [Email, setEmail] = useState(null);
     const [initialValues, setIntialvalues] = useState(null)
     const [open, setOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(null);
-
+const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
     const options = [
         { label: 'Male', value: 'male' },
         { label: 'Female', value: 'female' },
@@ -32,7 +36,7 @@ const EditProfile = () => {
         onSubmit: async (values) => {
             try {
                 const email = await SecureStore.getItemAsync('userEmail');
-                const response = await axios.put('http://192.168.1.2:3000/users/updateUser', {
+                const response = await API.put(`/users/updateUser`, {
                     email,
                     ...values,
                 });
@@ -57,7 +61,7 @@ const EditProfile = () => {
     const FetchData = async () => {
         try {
             const email = await SecureStore.getItemAsync('userEmail');
-            const res = await axios.post('http://192.168.1.2:3000/users/user', { email });
+            const res = await API.post(`http://${IpAddress.IpAddress}:3000/users/user`, { email });
             console.log('Setting initialValues:', res.data.user);
             setImage(res.data.user.image);
             setSelectedValue(res.data.user.gender || '');

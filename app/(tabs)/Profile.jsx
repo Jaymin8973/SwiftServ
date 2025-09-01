@@ -6,13 +6,16 @@ import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import IpAddress from '../../Config.json';
 const Profile = () => {
   const router = useRouter();
    const [image , setImage] = useState(null);
   const [name , setName] = useState(null);
   const [email , setEmail] = useState(null);
   const [Loading , setLoading] = useState(false);
-
+  const API = axios.create({
+  baseURL: `http://${IpAddress.IpAddress}:3000`,
+});
   useEffect(() => {
     FetchData();
   }, []);
@@ -21,7 +24,7 @@ const Profile = () => {
     try {
       setLoading(true);
       const email = await SecureStore.getItemAsync('userEmail');
-      const res = await axios.post('http://192.168.1.2:3000/users/user', { email });
+      const res = await API.post(`/users/user`, { email });
       const Name = res.data.user.firstname + " " + res.data.user.lastname;
       setImage(res.data.user.image);
       setName(Name);
@@ -62,7 +65,7 @@ const Profile = () => {
             </TouchableOpacity>
           </View>
           <View className="rounded-2xl border border-gray-300  px-4">
-            <TouchableOpacity onPress={() => (router.replace("/(Authentication)"))}>
+            <TouchableOpacity onPress={() => (router.push("Address"))}>
               <View className="flex-row mt-10 items-center justify-between border-b border-gray-300 pb-3 ">
                 <View className="flex-row gap-3 items-center">
                   <Entypo name="location-pin" size={24} color="black" />

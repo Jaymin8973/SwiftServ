@@ -104,14 +104,29 @@ const _layout = () => {
         ),
       })} />
 
-       <Stack.Screen name='SwipeExample' options={({ navigation }) => ({
+
+       <Stack.Screen name='AddressForm' options={({ navigation }) => ({
         headerLeft: () => (
           <Pressable className=" rounded-full p-2 " onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={20} color="black" />
           </Pressable>
         ),
         headerTitle: () => (
-          <Text className="text-2xl font-bold">Example</Text>
+          <Text className="text-2xl font-bold">Address</Text>
+        ),
+        headerBackground: () => (
+          <View style={{ backgroundColor: 'transparent' }} />
+        ),
+      })} />
+
+           <Stack.Screen name='Address' options={({ navigation }) => ({
+        headerLeft: () => (
+          <Pressable className=" rounded-full p-2 " onPress={() => navigation.goBack()}>
+            <AntDesign name="left" size={20} color="black" />
+          </Pressable>
+        ),
+        headerTitle: () => (
+          <Text className="text-2xl font-bold">Delivery Address</Text>
         ),
         headerBackground: () => (
           <View style={{ backgroundColor: 'transparent' }} />
